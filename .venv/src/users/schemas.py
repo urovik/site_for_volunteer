@@ -1,6 +1,4 @@
 from pydantic import BaseModel, EmailStr
-import datetime
-from enum import Enum
 
 from .models import Roles,Gender
 
@@ -15,3 +13,9 @@ class UserAddSchema(BaseModel):
     role: Roles
     email: EmailStr
     phonenumber: str
+
+
+class UserPayloadSchema(BaseModel):
+    id: int
+    login: str
+    role: Roles
