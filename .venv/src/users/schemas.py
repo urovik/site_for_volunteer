@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr,Field
 
 from .models import Roles,Gender
 
@@ -13,6 +13,13 @@ class UserAddSchema(BaseModel):
     role: Roles
     email: EmailStr
     phonenumber: str
+
+class VolunteerAddSchema(UserAddSchema):
+    role: Roles = Roles.VOLUNTEER
+    skills: str
+
+class NeedyAddSchema(UserAddSchema):
+    role: Roles = Roles.NEEDY
 
 
 class UserPayloadSchema(BaseModel):

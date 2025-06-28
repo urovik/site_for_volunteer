@@ -1,9 +1,9 @@
 from sqlalchemy import insert,select
 from src.auth.utils import hash_password
 from src.database.config import async_session
-from src.users.models import UserOrm
+from src.users.models import UserOrm,VolunteerOrm
 
-from  .schemas import UserAddSchema
+from  .schemas import UserAddSchema,VolunteerAddSchema,NeedyAddSchema
 
 class UserService():
 
@@ -23,6 +23,30 @@ class UserService():
             )
             await session.execute(query)
             await session.commit()
+
+    @classmethod
+    async def insert_volunteer_from_db(cls,volunteer: VolunteerAddSchema):
+        async with async_session() as session:
+            user_query = insert(UserOrm).values(
+                name=volunteer.name,
+                surname=volunteer.surname,
+                age=volunteer.age,
+                sex=volunteer.sex,
+                login=volunteer.login,
+                password_hash=hash_password(volunteer.password_hash),
+                role=volunteer.role ,
+                email=volunteer.email ,
+                phonenumber=volunteer.phonenumber,
+            )
+            res = await session.execute(user_query)
+            await session.commit()
+
+            user_id = res.inserted_primary_key[0]
+            volunteer_query = insert(VolunteerOrm).values(user_id = user_id,skills = volunteer.skills)
+            await session.execute(volunteer_query)
+            await session.commit()
+
+
     
     @classmethod
     async def get_user_payload_by_login_from_db(cls,login: str):
